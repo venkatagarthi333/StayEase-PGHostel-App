@@ -13,7 +13,8 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String roomType; // E.g. "2-sharing", "3-sharing"
+    private String roomNumber;
+    private String bedType; // e.g., "2-sharing", "3-sharing"
     private int totalBeds;
     private int availableBeds;
 
