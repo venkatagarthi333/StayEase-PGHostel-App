@@ -1,8 +1,10 @@
 package com.stayease.hostelapp.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,5 +26,6 @@ public class PGHostel {
     private User user; // The owner of the PG
 
     @OneToMany(mappedBy = "pgHostel", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Room> rooms;
+    @JsonManagedReference
+    private List<Room> rooms = new ArrayList<>();
 }

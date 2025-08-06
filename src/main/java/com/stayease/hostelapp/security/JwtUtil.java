@@ -15,7 +15,7 @@ public class JwtUtil {
     private String secret;
 
     @Value("${jwt.expiration}")
-    private long jwtExpiration;
+    private static final long jwtExpiration=1000 * 60 * 60 * 10;
 
     private Key getSigningKey() {
         // jjwt 0.11.5 requires decoding the base64 secret to a Key

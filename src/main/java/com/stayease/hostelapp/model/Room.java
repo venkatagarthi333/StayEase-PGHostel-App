@@ -1,5 +1,6 @@
 package com.stayease.hostelapp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,5 +21,6 @@ public class Room {
 
     @ManyToOne
     @JoinColumn(name = "pg_hostel_id")
+    @JsonBackReference
     private PGHostel pgHostel;
 }
