@@ -28,6 +28,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/pilgrim/**").hasRole("PILGRIM")
+                        .requestMatchers("/api/pg/**").hasRole("PG_OWNER")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
