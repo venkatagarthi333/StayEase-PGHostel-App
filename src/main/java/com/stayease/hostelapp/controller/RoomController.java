@@ -10,29 +10,33 @@ import java.util.List;
 
 @PreAuthorize("hasRole('PG_OWNER')")
 @RestController
-@RequestMapping("/api/rooms")
+@RequestMapping("/api/pg/rooms")
 public class RoomController {
 
     @Autowired
     private RoomService roomService;
 
+    //add room
     @PreAuthorize("hasRole('PG_OWNER')")
-    @PostMapping("/{pgHostelId}")
+    @PostMapping("add-room/{pgHostelId}")
     public Room addRoom(@PathVariable Long pgHostelId, @RequestBody Room room) {
         return roomService.addRoom(pgHostelId, room);
     }
 
-    @PutMapping("/{roomId}")
+    //update room
+    @PutMapping("update-room/{roomId}")
     public Room updateRoom(@PathVariable Long roomId, @RequestBody Room room) {
         return roomService.updateRoom(roomId, room);
     }
 
-    @DeleteMapping("/{roomId}")
+    //delete room
+    @DeleteMapping("delete-room/{roomId}")
     public void deleteRoom(@PathVariable Long roomId) {
         roomService.deleteRoom(roomId);
     }
 
-    @GetMapping("/pg/{pgHostelId}")
+    //get all rooms
+    @GetMapping("/get-rooms/{pgHostelId}")
     public List<Room> getRoomsByPG(@PathVariable Long pgHostelId) {
         return roomService.getRoomsByPG(pgHostelId);
     }

@@ -1,5 +1,6 @@
 package com.stayease.hostelapp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,8 +22,9 @@ public class PGHostel {
     private String location;
     private String contactNumber;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user; // The owner of the PG
 
     @OneToMany(mappedBy = "pgHostel", cascade = CascadeType.ALL, orphanRemoval = true)

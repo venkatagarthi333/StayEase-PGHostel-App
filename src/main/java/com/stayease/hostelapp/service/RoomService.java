@@ -18,6 +18,7 @@ public class RoomService {
     @Autowired
     private PGHostelRepository pgHostelRepository;
 
+    //add room
     public Room addRoom(Long pgHostelId, Room room) {
         PGHostel pgHostel = pgHostelRepository.findById(pgHostelId)
                 .orElseThrow(() -> new RuntimeException("PG Hostel not found"));
@@ -26,6 +27,7 @@ public class RoomService {
         return roomRepository.save(room);
     }
 
+    //update room
     public Room updateRoom(Long roomId, Room updatedRoom) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("Room not found"));
@@ -38,10 +40,12 @@ public class RoomService {
         return roomRepository.save(room);
     }
 
+    //delete room
     public void deleteRoom(Long roomId) {
         roomRepository.deleteById(roomId);
     }
 
+    //get all rooms
     public List<Room> getRoomsByPG(Long pgHostelId) {
         PGHostel pgHostel = pgHostelRepository.findById(pgHostelId)
                 .orElseThrow(() -> new RuntimeException("PG Hostel not found"));

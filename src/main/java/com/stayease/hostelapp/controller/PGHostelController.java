@@ -1,83 +1,53 @@
 package com.stayease.hostelapp.controller;
 
-import com.stayease.hostelapp.model.*;
-import com.stayease.hostelapp.repository.*;
+import com.stayease.hostelapp.model.PGHostel;
+import com.stayease.hostelapp.service.PGHostelService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.security.core.Authentication;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
+
+@PreAuthorize("hasRole('PG_OWNER')")
 @RestController
 @RequestMapping("/api/pg")
 public class PGHostelController {
 
     @Autowired
-    private PGHostelRepository pgHostelRepo;
+    private PGHostelService pgHostelService;
 
-    @Autowired
-    private RoomRepository roomRepo;
-
-    @Autowired
-    private UserRepository userRepo;
-
+    //add hostel
     @PostMapping("/add-hostel")
-    public ResponseEntity<String> createPGHostel(@AuthenticationPrincipal UserDetails userDetails,
-                                                 @RequestBody PGHostel hostelData) {
-
-        /*User user = userRepo.findByUsername(userDetails.getUsername()).orElseThrow();
-        User user = userRepo.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + userDetails.getUsername()));*/
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-
-        Optional<User> userOptional = userRepo.findByEmail(email);
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        User user = userOptional.get();
-
-
-
-        PGHostel hostel = new PGHostel();
-        hostel.setUser(user);
-        hostel.setHostelName(hostelData.getHostelName());
-        hostel.setLocation(hostelData.getLocation());
-        hostel.setContactNumber(hostelData.getContactNumber());
-
-        pgHostelRepo.save(hostel);
-
-        return ResponseEntity.ok("PG Hostel created successfully");
+    public ResponseEntity<?> createHostel(@AuthenticationPrincipal UserDetails userDetails,
+                                          @RequestBody PGHostel pgHostel) {
+        PGHostel createdHostel = pgHostelService.createHostel(userDetails.getUsername(), pgHostel);
+        return ResponseEntity.ok(createdHostel);
     }
 
-
-    @PostMapping("/add-room")
-    public ResponseEntity<String> addRoom(@AuthenticationPrincipal UserDetails userDetails,
-                                          @RequestBody Room room) {
-
-        User user = userRepo.findByUsername(userDetails.getUsername()).orElseThrow();
-
-        PGHostel hostel = pgHostelRepo.findByUserId(user.getId()).orElseThrow(() ->
-                new RuntimeException("PG Hostel not found for user"));
-
-        room.setPgHostel(hostel);
-        roomRepo.save(room);
-
-        return ResponseEntity.ok("Room added successfully");
+    //get all hostels
+    @GetMapping("/my-hostels")
+    public ResponseEntity<List<PGHostel>> getMyHostels(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(pgHostelService.getHostelsByOwner(userDetails.getUsername()));
     }
 
-    @GetMapping("/my-rooms")
-    public ResponseEntity<List<Room>> getMyRooms(@AuthenticationPrincipal UserDetails userDetails) {
-        User user = userRepo.findByUsername(userDetails.getUsername()).orElseThrow();
+    // Update hostel
+    @PutMapping("/update-hostel/{hostelId}")
+    public ResponseEntity<?> updateHostel(@AuthenticationPrincipal UserDetails userDetails,
+                                          @PathVariable Long hostelId,
+                                          @RequestBody PGHostel pgHostel) {
+        PGHostel updatedHostel = pgHostelService.updateHostel(userDetails.getUsername(), hostelId, pgHostel);
+        return ResponseEntity.ok(updatedHostel);
+    }
 
-        PGHostel hostel = pgHostelRepo.findByUserId(user.getId()).orElseThrow();
-
-        return ResponseEntity.ok(hostel.getRooms());
+    // Delete hostel
+    @DeleteMapping("/delete-hostel/{hostelId}")
+    public ResponseEntity<?> deleteHostel(@AuthenticationPrincipal UserDetails userDetails,
+                                          @PathVariable Long hostelId) {
+        pgHostelService.deleteHostel(userDetails.getUsername(), hostelId);
+        return ResponseEntity.ok("Hostel deleted successfully");
     }
 }
