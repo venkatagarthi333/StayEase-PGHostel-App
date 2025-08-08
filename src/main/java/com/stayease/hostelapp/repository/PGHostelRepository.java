@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface PGHostelRepository extends JpaRepository<PGHostel, Long> {
     Optional<PGHostel> findByUserId(Long userId);
     List<PGHostel> findByUser(User user);
+
+    List<PGHostel> findByLocationIgnoreCase(String location);
 }
