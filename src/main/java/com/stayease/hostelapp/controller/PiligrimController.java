@@ -44,4 +44,12 @@ public class PiligrimController {
         Piligrim booking = pilgrimService.bookRoom(userDetails.getUsername(), roomId);
         return ResponseEntity.ok("room booked successfully");
     }
+
+    //check out and cancel room
+    @DeleteMapping("/cancel-booking")
+    @PreAuthorize("hasRole('PILGRIM')")
+    public ResponseEntity<?> cancelBooking(@AuthenticationPrincipal UserDetails userDetails) {
+        pilgrimService.cancelBooking(userDetails.getUsername());
+        return ResponseEntity.ok("Booking cancelled successfully");
+    }
 }

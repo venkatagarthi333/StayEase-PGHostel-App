@@ -51,9 +51,27 @@ public class PiligrimService {
         pilgrim.setRoom(room);
         pilgrim.setPgHostel(pgHostel);
 
-        room.setAvailableBeds(room.getAvailableBeds() - 1); // reduce 1 bed
 
         roomRepo.save(room);
+        room.setAvailableBeds(room.getAvailableBeds() - 1); // reduce 1 bed
         return pilgrimRepo.save(pilgrim);
+    }
+
+    //check out room
+    public void cancelBooking(String userEmail) {
+        User user = userRepo.findByEmail(userEmail).orElseThrow();
+
+        // Find pilgrim booking for this user
+        Piligrim pilgrim = pilgrimRepo.findByUser(user).orElseThrow();
+
+        Room room = pilgrim.getRoom();
+
+
+        room.setAvailableBeds(room.getAvailableBeds() + 1);
+
+        roomRepo.save(room);
+
+        // Delete pilgrim booking
+        pilgrimRepo.delete(pilgrim);
     }
 }
