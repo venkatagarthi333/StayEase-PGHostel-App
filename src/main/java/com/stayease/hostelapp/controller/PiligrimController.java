@@ -1,5 +1,6 @@
 package com.stayease.hostelapp.controller;
 
+import com.stayease.hostelapp.dto.PGHostelResponseDTO;
 import com.stayease.hostelapp.model.PGHostel;
 import com.stayease.hostelapp.model.Piligrim;
 import com.stayease.hostelapp.model.Room;
@@ -22,9 +23,18 @@ public class PiligrimController {
 
     //search hostels based on location
     @GetMapping("/search")
-    public ResponseEntity<List<PGHostel>> searchHostels(@RequestParam String location) {
+    public ResponseEntity<List<PGHostelResponseDTO>> searchHostels(@RequestParam String location) {
         List<PGHostel> hostels = pilgrimService.searchHostelsByLocation(location);
-        return ResponseEntity.ok(hostels);
+        List<PGHostelResponseDTO> dtoList = hostels.stream()
+                .map(h -> new PGHostelResponseDTO(
+                        h.getId(),
+                        h.getHostelName(),
+                        h.getLocation(),
+                        h.getContactNumber()
+                ))
+                .toList();
+
+        return ResponseEntity.ok(dtoList);
     }
 
 

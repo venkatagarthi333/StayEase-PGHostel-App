@@ -1,5 +1,6 @@
 package com.stayease.hostelapp.controller;
 
+import com.stayease.hostelapp.dto.PGHostelResponseDTO;
 import com.stayease.hostelapp.model.PGHostel;
 import com.stayease.hostelapp.service.PGHostelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,13 @@ public class PGHostelController {
     public ResponseEntity<?> createHostel(@AuthenticationPrincipal UserDetails userDetails,
                                           @RequestBody PGHostel pgHostel) {
         PGHostel createdHostel = pgHostelService.createHostel(userDetails.getUsername(), pgHostel);
-        return ResponseEntity.ok(createdHostel);
+        PGHostelResponseDTO response = new PGHostelResponseDTO(
+                createdHostel.getId(),
+                createdHostel.getHostelName(),
+                createdHostel.getLocation(),
+                createdHostel.getContactNumber()
+        );
+        return ResponseEntity.ok(response);
     }
 
     //get all hostels
@@ -40,7 +47,7 @@ public class PGHostelController {
                                           @PathVariable Long hostelId,
                                           @RequestBody PGHostel pgHostel) {
         PGHostel updatedHostel = pgHostelService.updateHostel(userDetails.getUsername(), hostelId, pgHostel);
-        return ResponseEntity.ok(updatedHostel);
+        return ResponseEntity.ok("Hostel updated successfully");
     }
 
     // Delete hostel
