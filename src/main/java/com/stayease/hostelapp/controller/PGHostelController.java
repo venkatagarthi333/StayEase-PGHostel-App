@@ -37,8 +37,19 @@ public class PGHostelController {
 
     //get all hostels
     @GetMapping("/my-hostels")
-    public ResponseEntity<List<PGHostel>> getMyHostels(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(pgHostelService.getHostelsByOwner(userDetails.getUsername()));
+    public ResponseEntity<List<PGHostelResponseDTO>> getMyHostels(@AuthenticationPrincipal UserDetails userDetails) {
+        List<PGHostel> hostels = pgHostelService.getHostelsByOwner(userDetails.getUsername());
+        List<PGHostelResponseDTO> responseDTOS = hostels.stream()
+                .map(h -> new PGHostelResponseDTO(
+                        h.getId(),
+                        h.getHostelName(),
+                        h.getLocation(),
+                        h.getContactNumber()
+                ))
+                .toList();
+
+
+        return ResponseEntity.ok(responseDTOS);
     }
 
     // Update hostel
